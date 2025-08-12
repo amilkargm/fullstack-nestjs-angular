@@ -30,16 +30,18 @@ export class AuthService {
 
     if (!user)
       throw new UnauthorizedException(
-        'Your password or email are wrong! Please try again!',
+        'Your credentials are incorrect! Please try again!',
       );
 
     if (!bcrypt.compareSync(password, user.password))
       throw new UnauthorizedException(
-        'Your password or email are wrong! Please try again!',
+        'Your credentials are incorrect! Please try again!',
       );
 
+    const { password: p, ...rest } = user;
+
     return {
-      ...user,
+      ...rest,
       token: this.getJwtToken({
         id: user.id,
         username: user.username,
@@ -48,7 +50,7 @@ export class AuthService {
     };
   }
 
-  async checkAuthStatus(user: User) {
+  checkAuthStatus(user: User) {
     return {
       ...user,
       token: this.getJwtToken({

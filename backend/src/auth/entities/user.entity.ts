@@ -11,7 +11,7 @@ import { UserRole } from '../interfaces';
 
 @Entity({ name: 'users' })
 export class User {
-  @PrimaryGeneratedColumn('identity')
+  @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ unique: true, length: 50, nullable: false, type: 'varchar' })
@@ -25,6 +25,9 @@ export class User {
 
   @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
   role: UserRole;
+
+  @Column({ type: 'tinyint', default: 1 })
+  status: boolean;
 
   @CreateDateColumn()
   public created_at: Date;
