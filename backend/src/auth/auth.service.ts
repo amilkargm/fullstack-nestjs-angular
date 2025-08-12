@@ -24,7 +24,7 @@ export class AuthService {
     const { password, email } = loginUserDto;
 
     const user = await this.userRepository.findOne({
-      where: { email },
+      where: { email, status: true },
       select: { email: true, password: true, id: true }, //! OJO!
     });
 
@@ -50,9 +50,18 @@ export class AuthService {
     };
   }
 
-  checkAuthStatus(user: User) {
+  async checkAuthStatus(user: User) {
+    const userDB = await this.userRepository.findOne({
+      where: { id: user.id, status: true },
+      select: { email: true, id: true }, //! OJO!
+    });
+
+    if (!userDB)
+      throw new UnauthorizedException(
+        'Your credentials are incorrect! Please try again!',
+      );
     return {
-      ...user,
+      ...userDB,
       token: this.getJwtToken({
         id: user.id,
         username: user.username,
