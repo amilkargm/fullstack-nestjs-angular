@@ -1,0 +1,27 @@
+{
+  "name": "prueba-tecnica-nestjs-angular",
+  "version": "1.0.0",
+  "description": "This project is a fullstack technical technical test. The backend was built using NestJS, which is also able to serve the frontend app. The frontend was built using Angular and the PrimeNG library. A Sakai template for the latter was used.",
+  "keywords": [
+    "nestjs",
+    "technical-test",
+    "angular",
+    "primeng",
+    "sakai"
+  ],
+  "homepage": "https://github.com/amilkargm/prueba-tecnica-nestjs-angular#readme",
+  "bugs": {
+    "url": "https://github.com/amilkargm/prueba-tecnica-nestjs-angular/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amilkargm/prueba-tecnica-nestjs-angular.git"
+  },
+  "license": "MIT",
+  "author": "José Amílcar González Miranda",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
