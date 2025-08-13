@@ -65,7 +65,7 @@ export class AuthService {
             })
             .pipe(
                 map((resp) => this.handleAuthSuccess(resp)),
-                catchError((error: any) => this.handleAuthError(error))
+                catchError((error: any) => this.handleAuthStatusError(error))
             );
     }
 
@@ -94,6 +94,19 @@ export class AuthService {
             summary: '¡Error!',
             key: 'errors',
             detail: '¡El correo electrónico o la contraseña son incorrectos! Por favor, vuelve a intentarlo.',
+            life: 5000
+        });
+        this.logout();
+        return of(false);
+    }
+
+    private handleAuthStatusError(error: any) {
+        this.blockDocumentService.unblockDocument();
+        this.messageService.add({
+            severity: 'error',
+            summary: '¡Error!',
+            key: 'errors',
+            detail: 'Tu acceso ha expirado! Por favor, vuelve a inicar sesión.',
             life: 5000
         });
         this.logout();
