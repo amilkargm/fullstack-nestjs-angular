@@ -127,7 +127,6 @@ export class ProductsService {
     if (error.code === '23505') throw new BadRequestException(error.detail);
 
     this.logger.error(error);
-    // console.log(error)
     throw new InternalServerErrorException(
       'Something went wrong. Please contact the admin.',
     );

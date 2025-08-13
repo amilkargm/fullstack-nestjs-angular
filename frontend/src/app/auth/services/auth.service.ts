@@ -53,8 +53,6 @@ export class AuthService {
 
     checkStatus(): Observable<boolean> {
         const token = localStorage.getItem('token');
-        console.log({token});
-        
         if (!token) {
             this.logout();
             return of(false);
@@ -80,8 +78,6 @@ export class AuthService {
     }
 
     private handleAuthSuccess({ token, user }: AuthResponse) {
-        console.log({ token, user });
-
         this.blockDocumentService.unblockDocument();
         this._user.set(user);
         this._authStatus.set('authenticated');
@@ -92,8 +88,6 @@ export class AuthService {
     }
 
     private handleAuthError(error: any) {
-        console.log({ error });
-
         this.blockDocumentService.unblockDocument();
         this.messageService.add({
             severity: 'error',
