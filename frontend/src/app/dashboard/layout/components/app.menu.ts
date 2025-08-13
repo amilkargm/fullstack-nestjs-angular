@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { AppMenuitem } from './app.menuitem';
+import { AuthService } from '@/auth/services/auth.service';
 
 @Component({
     selector: 'app-menu',
@@ -16,24 +17,33 @@ import { AppMenuitem } from './app.menuitem';
     </ul> `
 })
 export class AppMenu {
+    private userService = inject(AuthService);
     model: MenuItem[] = [];
 
     ngOnInit() {
         this.model = [
             {
                 label: 'Home',
-                items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/'] }]
+                items: [
+                    {
+                        label: 'Dashboard',
+                        icon: 'pi pi-fw pi-home',
+                        routerLink: ['/']
+                    }
+                ]
             },
             {
-                label: 'Manage',
+                label: this.userService.isAdmin() ? 'Manage Data' : 'View Data',
                 items: [
                     {
                         label: 'Categories',
-                        icon: 'pi pi-fw pi-bookmark'
+                        icon: 'pi pi-fw pi-book',
+                        routerLink: ['categories']
                     },
                     {
                         label: 'Products',
-                        icon: 'pi pi-fw pi-bookmark'
+                        icon: 'pi pi-fw pi-barcode',
+                        routerLink: ['products']
                     }
                 ]
             }
