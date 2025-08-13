@@ -43,9 +43,6 @@ export class LoginPageComponent {
                 return;
             }
             this.hasError.set(true);
-            setTimeout(() => {
-                this.hasError.set(false);
-            }, 2000);
         });
     }
 }

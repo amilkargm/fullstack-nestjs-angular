@@ -25,7 +25,13 @@ export class AuthService {
 
     const user = await this.userRepository.findOne({
       where: { email, status: true },
-      select: { email: true, password: true, id: true }, //! OJO!
+      select: {
+        email: true,
+        username: true,
+        role: true,
+        password: true,
+        id: true,
+      }, //! OJO!
     });
 
     if (!user)
@@ -41,7 +47,7 @@ export class AuthService {
     const { password: p, ...rest } = user;
 
     return {
-      ...rest,
+      user: rest,
       token: this.getJwtToken({
         id: user.id,
         username: user.username,
@@ -53,7 +59,7 @@ export class AuthService {
   async checkAuthStatus(user: User) {
     const userDB = await this.userRepository.findOne({
       where: { id: user.id, status: true },
-      select: { email: true, id: true }, //! OJO!
+      select: { email: true, id: true, username: true, role: true },
     });
 
     if (!userDB)
@@ -61,7 +67,7 @@ export class AuthService {
         'Your credentials are incorrect! Please try again!',
       );
     return {
-      ...userDB,
+      user: userDB,
       token: this.getJwtToken({
         id: user.id,
         username: user.username,

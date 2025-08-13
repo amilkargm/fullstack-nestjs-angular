@@ -6,7 +6,7 @@ import { AuthStatus } from '@auth/types/auth-status.type';
 import { BlockDocumentService } from '@shared/services/block-document.service';
 import { FormUtils } from '@utils/form-utils';
 import { MessageService } from 'primeng/api';
-import { catchError, delay, map, Observable, of, tap } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 import { environment } from 'src/app/environments/environment';
 
 const baseUrl = environment.baseUrl;
@@ -36,7 +36,7 @@ export class AuthService {
 
     user = computed<User | null>(() => this._user());
     token = computed<string | null>(() => this._token());
-    isAdmin = computed<boolean>(() => this._user()?.type.includes('CRD_USER') ?? false);
+    isAdmin = computed<boolean>(() => this._user()?.role.includes('admin') ?? false);
 
     login(email: string, password: string): Observable<boolean> {
         this.blockDocumentService.blockDocument();
@@ -46,7 +46,6 @@ export class AuthService {
                 password
             })
             .pipe(
-                delay(3000),
                 map((resp) => this.handleAuthSuccess(resp)),
                 catchError((error: any) => this.handleAuthError(error))
             );
@@ -54,14 +53,22 @@ export class AuthService {
 
     checkStatus(): Observable<boolean> {
         const token = localStorage.getItem('token');
+        console.log({token});
+        
         if (!token) {
             this.logout();
             return of(false);
         }
-        return this.http.get<AuthResponse>(`${baseUrl}/auth`).pipe(
-            map((resp) => this.handleAuthSuccess(resp)),
-            catchError((error: any) => this.handleAuthError(error))
-        );
+        return this.http
+            .get<AuthResponse>(`${baseUrl}/auth/check-status`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            .pipe(
+                map((resp) => this.handleAuthSuccess(resp)),
+                catchError((error: any) => this.handleAuthError(error))
+            );
     }
 
     logout() {
@@ -71,17 +78,22 @@ export class AuthService {
         this._isAdmin.set(false);
         localStorage.removeItem('token');
     }
+
     private handleAuthSuccess({ token, user }: AuthResponse) {
+        console.log({ token, user });
+
         this.blockDocumentService.unblockDocument();
         this._user.set(user);
         this._authStatus.set('authenticated');
         this._token.set(token);
-        this._isAdmin.set(false);
+        this._isAdmin.set(user.role.includes('admin'));
         localStorage.setItem('token', token);
         return true;
     }
 
     private handleAuthError(error: any) {
+        console.log({ error });
+
         this.blockDocumentService.unblockDocument();
         this.messageService.add({
             severity: 'error',
