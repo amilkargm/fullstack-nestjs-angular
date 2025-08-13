@@ -26,8 +26,15 @@ import { join } from 'path';
       synchronize: false, // Set to false in production
     }),
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', '..', 'frontend', 'dist', 'frontend'),
-      serveRoot: '/',
+      rootPath: join(
+        __dirname,
+        '..',
+        '..',
+        'frontend',
+        'dist',
+        'frontend',
+        'browser',
+      ),
     }),
     AuthModule,
     SeedModule,
