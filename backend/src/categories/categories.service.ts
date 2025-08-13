@@ -85,21 +85,8 @@ export class CategoriesService {
 
     if (!category)
       throw new NotFoundException(`Category with id: ${id} not found`);
-
-    // Create query runner
-    // const queryRunner = this.dataSource.createQueryRunner();
-    // await queryRunner.connect();
-    // await queryRunner.startTransaction();
-
     try {
       await this.categoryRepository.save(category);
-      //   category.user = user;
-
-      //   await queryRunner.manager.save(category);
-
-      //   await queryRunner.commitTransaction();
-      //   await queryRunner.release();
-
       return this.findOnePlain(id.toString());
     } catch (error) {
       this.handleDBExceptions(error);
