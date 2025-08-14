@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
-import { Crud } from '../pages/crud/crud';
 import { DashboardLayoutComponent } from './layout/dashboard-layout/dashboard-layout.component';
 import { HomePage } from './home-page';
+import { CategoriesPageComponent } from './pages/categories-page/categories-page.component';
 
 export default [
     {
@@ -9,7 +9,7 @@ export default [
         component: DashboardLayoutComponent,
         children: [
             { path: '', component: HomePage },
-            { path: 'crud', component: Crud },
+            { path: 'categories', component: CategoriesPageComponent },
             { path: '**', redirectTo: '/' }
         ]
     }

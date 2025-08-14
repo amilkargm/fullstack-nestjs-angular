@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { AppMenuitem } from './app.menuitem';
 import { AuthService } from '@/auth/services/auth.service';
@@ -18,6 +18,7 @@ import { AuthService } from '@/auth/services/auth.service';
 })
 export class AppMenu {
     private userService = inject(AuthService);
+    private router = inject(Router);
     model: MenuItem[] = [];
 
     ngOnInit() {
@@ -44,6 +45,19 @@ export class AppMenu {
                         label: 'Products',
                         icon: 'pi pi-fw pi-barcode',
                         routerLink: ['products']
+                    }
+                ]
+            },
+            {
+                label: 'Session',
+                items: [
+                    {
+                        label: 'Logout',
+                        icon: 'pi pi-fw pi-sign-out',
+                        command: () => {
+                            this.userService.logout();
+                            this.router.navigateByUrl('/auth/login');
+                        }
                     }
                 ]
             }
