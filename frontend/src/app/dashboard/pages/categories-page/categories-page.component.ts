@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table, TableModule, TablePageEvent } from 'primeng/table';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormsModule, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { ToastModule } from 'primeng/toast';
@@ -22,6 +22,8 @@ import { Category } from '@/dashboard/interfaces';
 import { CategoriesService } from '@/dashboard/services/categories.service';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { AuthService } from '@/auth/services/auth.service';
+import { minLengthIfPresent } from '@/shared/validators/min-length-if-present.validator';
+import { FormErrorLabelComponent } from '@/shared/components/form-error-label/form-error-label.component';
 // import { Category, CategoryService } from '../service/category.service';
 
 interface Column {
@@ -39,6 +41,7 @@ interface ExportColumn {
     selector: 'app-categories-page',
     standalone: true,
     imports: [
+        ReactiveFormsModule,
         CommonModule,
         TableModule,
         FormsModule,
@@ -57,16 +60,23 @@ interface ExportColumn {
         InputIconModule,
         IconFieldModule,
         ToggleSwitchModule,
-        ConfirmDialogModule
+        ConfirmDialogModule,
+        FormErrorLabelComponent
     ],
     providers: [ConfirmationService],
     templateUrl: './categories-page.component.html'
 })
 export class CategoriesPageComponent implements OnInit {
     authService = inject(AuthService);
+    fb = inject(FormBuilder);
     private categoryService = inject(CategoriesService);
     private messageService = inject(MessageService);
     private confirmationService = inject(ConfirmationService);
+
+    form = this.fb.group({
+        name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
+        description: ['', minLengthIfPresent(5)]
+    });
 
     categoryDialog: boolean = false;
 
@@ -116,6 +126,10 @@ export class CategoriesPageComponent implements OnInit {
 
     editCategory(category: Category) {
         this.category = { ...category };
+        this.form.patchValue({
+            name: category.name,
+            description: category.description
+        });
         this.categoryDialog = true;
     }
 
@@ -169,39 +183,45 @@ export class CategoriesPageComponent implements OnInit {
     }
 
     saveCategory() {
-        this.submitted = true;
         let _categories = this.categories();
-        if (this.category.name?.trim()) {
-            if (this.category.id) {
-                this.categoryService.updateCategory(this.category.id, this.category).subscribe((category) => {
-                    this.categoryService.getCategories().subscribe((data) => {
-                        this.categories.set(data);
-                    });
-
-                    this.categories.set([..._categories]);
-                    this.messageService.add({
-                        severity: 'success',
-                        summary: 'Successful',
-                        key: 'successes',
-                        detail: 'Category Updated',
-                        life: 3000
-                    });
+        if (this.category.id) {
+            this.categoryService.updateCategory(this.category.id, this.category).subscribe((category) => {
+                this.categoryService.getCategories().subscribe((data) => {
+                    this.categories.set(data);
                 });
-            } else {
-                this.categoryService.createCategory(this.category).subscribe((category) => {
-                    this.categories.set([..._categories, category]);
-                    this.messageService.add({
-                        severity: 'success',
-                        summary: 'Successful',
-                        key: 'successes',
-                        detail: 'Category Created',
-                        life: 3000
-                    });
-                });
-            }
 
-            this.categoryDialog = false;
-            this.category = {};
+                this.categories.set([..._categories]);
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Successful',
+                    key: 'successes',
+                    detail: 'Category Updated',
+                    life: 3000
+                });
+            });
+        } else {
+            this.categoryService.createCategory(this.category).subscribe((category) => {
+                this.categories.set([..._categories, category]);
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Successful',
+                    key: 'successes',
+                    detail: 'Category Created',
+                    life: 3000
+                });
+            });
         }
+
+        this.categoryDialog = false;
+        this.category = {};
+        this.form.reset();
+    }
+
+    onSubmit() {
+        if (this.form.invalid) {
+            return;
+        }
+        this.category = { ...this.category, description: this.form.value.description!, name: this.form.value.name! };
+        this.saveCategory();
     }
 }
