@@ -10,7 +10,6 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { isInt } from 'class-validator';
 import { CreateCategoryDto, UpdateCategoryDto } from './dto';
-import { PaginationDto } from 'src/common/dto';
 
 @Injectable()
 export class CategoriesService {
@@ -31,13 +30,8 @@ export class CategoriesService {
     }
   }
 
-  async findAll(paginationDto: PaginationDto) {
-    const { limit = 10, offset = 0 } = paginationDto;
-
-    const categories = await this.categoryRepository.find({
-      take: limit,
-      skip: offset,
-    });
+  async findAll() {
+    const categories = await this.categoryRepository.find();
 
     return { categories };
   }
