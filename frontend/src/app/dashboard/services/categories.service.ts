@@ -16,7 +16,6 @@ const headers = {
 })
 export class CategoriesService {
     private http = inject(HttpClient);
-    private messageService = inject(MessageService);
 
     getCategories(): Observable<Category[]> {
         return this.http

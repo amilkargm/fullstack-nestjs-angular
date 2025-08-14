@@ -87,17 +87,10 @@ export class CategoriesPageComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.loadDemoData();
+        this.loadData();
     }
 
-    pageChange(event: TablePageEvent) {
-        console.log(event);
-
-        // this.first = event.first;
-        // this.rows = event.rows;
-    }
-
-    loadDemoData() {
+    loadData() {
         this.categoryService.getCategories().subscribe((data) => {
             this.categories.set(data);
         });
