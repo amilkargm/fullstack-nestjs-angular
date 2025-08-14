@@ -26,7 +26,7 @@ export class Category {
   updated_at: Date;
 
   @Column({ type: 'tinyint', default: 1 })
-  status: boolean;
+  status: number;
 
   @OneToMany(() => Product, (product) => product.category, {
     eager: false,
