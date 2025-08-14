@@ -1,7 +1,7 @@
 {
   "name": "prueba-tecnica-nestjs-angular",
   "version": "1.0.0",
-  "description": "This project is a fullstack technical technical test. The backend was built using NestJS, which is also able to serve the frontend app. The frontend was built using Angular and the PrimeNG library. A Sakai template for the latter was used.",
+  "description": "This project is a fullstack application. The backend was built using NestJS, which is also able to serve the frontend app. The database was implemented using MySQL. The frontend was built using Angular and the PrimeNG library. A Sakai template for the latter was used as the foundation.",
   "keywords": [
     "nestjs",
     "technical-test",
