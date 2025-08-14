@@ -84,6 +84,67 @@ To start the full app, run the following command:
 npm run start:full-app
 ```
 
+The app does not currently have a register/user creation module, but the backend has a seeder endpoint. By consuming the GET endpoint `<backend_host_url>/api/seed`, two users will be created; running it again will delete and recreate the users. The following credentials are used for login by default:
+
+```
+Normal user:
+- Email: user@example.com
+- Password: abc123
+
+Admin user:
+- Email: admin@example.com
+- Password: def456
+```
+
+If you wish to change them, edit the file `./backend/src/seed/data/seed-data.ts` before running the seed; whether on initial setup or to change them later:
+
+```
+### ./backend/src/seed/data/seed-data.ts
+
+. . .
+
+export const initialData: SeedData = {
+  users: [
+    {
+      email: 'user@example.com',
+      username: 'User',
+      password: bcrypt.hashSync('abc123', 10),
+      role: UserRole.USER, // Assuming UserRole is an enum with a USER value
+    },
+    {
+      email: 'admin@example.com',
+      username: 'Admin',
+      password: bcrypt.hashSync('def456', 10),
+      role: UserRole.ADMIN, // Assuming UserRole is an enum with an ADMIN value
+    },
+  ],
+};
+
+. . .
+```
+
+By default, the seed endpoint does not require authentication nor authorization. If you wish to enable them, uncomment the following lines in the file `.backend/src/seed/seed.controller.ts`. Please be advised that without having an active admin user, you will not be able to run the seed:
+
+```
+### .backend/src/seed/seed.controller.ts
+
+. . .
+
+// import { Auth } from 'src/auth/decorators';
+// import { UserRole } from 'src/auth/interfaces';
+
+. . .
+
+// @Auth(UserRole.ADMIN)
+
+. . .
+
+```
+
+## Postman collection
+
+A Postman collection has been provided in the file `./fullstack-nestjs-angular-app.postman_collection.json` to make it easier to more directly interact with the backend API.
+
 ## License
 
-This app is MIT licensed.
+This app is [MIT licensed](https://github.com/amilkargm/prueba-tecnica-nestjs-angular/blob/main/LICENSE).
