@@ -76,6 +76,14 @@ baseUrl: 'http://localhost:3000/api' ### Base URL to consume the backend API
 . . .
 ```
 
+## Install npm dependencies
+
+To install the dependencies of both the frontend and backend, run the following command:
+
+```
+npm run install:deps
+```
+
 ## Start the full app
 
 To start the full app, run the following command:
@@ -139,6 +147,14 @@ By default, the seed endpoint does not require authentication nor authorization.
 
 . . .
 
+```
+
+## Build backend and frontend
+
+If you require a different setup, you can build both the frontend and backend for that purpose. To do so, run the following command:
+
+```
+npm run build:full-app
 ```
 
 ## Postman collection
