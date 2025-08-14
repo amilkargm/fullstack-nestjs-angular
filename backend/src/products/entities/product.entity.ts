@@ -33,7 +33,7 @@ export class Product {
   updated_at: Date;
 
   @Column({ type: 'tinyint', default: 1 })
-  status: boolean;
+  status: number;
 
   @ManyToOne(() => Category, (category) => category.product, {
     eager: true,
