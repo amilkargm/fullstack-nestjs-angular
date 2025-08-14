@@ -92,7 +92,10 @@ To start the full app, run the following command:
 npm run start:full-app
 ```
 
+The app will be running at the specified backend url and port specified. Assuming the default url is, `http://localhost:3000`, the frontend will be accesible from `http://localhost/`, while the API endpoints are accesible from `http://localhost:3000/api`.
+
 The app does not currently have a register/user creation module, but the backend has a seeder endpoint. By consuming the GET endpoint `<backend_host_url>/api/seed`, two users will be created; running it again will delete and recreate the users. The following credentials are used for login by default:
+
 
 ```
 Normal user:
