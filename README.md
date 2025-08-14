@@ -12,9 +12,9 @@ This project is a fullstack application. The backend was built using NestJS, whi
 
 The app requires a MySQL database to connect to. Please set up a MySQL database before proceeding and configure it as you need it.
 
-The app requires a schema named `BDPruebaTecnicaCanopia`, so the SQL script is provided in the `BDPruebaTecnicaCanopia.sql` to allow a quick setup.
+The app requires a schema, so an SQL script is provided in the `db.sql` to allow a quick setup; make.
 
-Take note of the credentials (`username` and `password`), the `host` and the `port` which will be used to communicate with the database. Make sure that the user can operate the previously mentioned schema; `root` user is set as a default, but it is highly recommended to use a different one in production.
+Take note of the credentials (`username` and `password`), the `host`, the `port`, and the schema name (`db_name`) which will be used to communicate with the database. Make sure that the user can operate the previously mentioned schema; `root` user is set as a default, but it is highly recommended to use a different one in production.
 
 ## Setup backend environment variables
 
