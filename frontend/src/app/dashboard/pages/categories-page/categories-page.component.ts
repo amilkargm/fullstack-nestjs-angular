@@ -134,6 +134,7 @@ export class CategoriesPageComponent implements OnInit {
     }
 
     hideDialog() {
+        this.form.reset();
         this.categoryDialog = false;
         this.submitted = false;
     }

@@ -86,39 +86,49 @@
 </p-table>
 
 @if (authService.isAdmin()) {
-    <p-dialog [(visible)]="productDialog" [style]="{ width: '450px' }" header="Product Details" [modal]="true">
-        <ng-template #content>
-            <div class="flex flex-col gap-6">
+    <p-dialog [(visible)]="productDialog" [style]="{ width: '500px' }" header="Product Details" [modal]="true">
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <div class="flex flex-col gap-4 mb-4">
                 <div>
                     <label for="name" class="block font-bold mb-3">Name</label>
-                    <input type="text" pInputText id="name" [(ngModel)]="product.name" required autofocus fluid />
-                    <small class="text-red-500" *ngIf="submitted && !product.name">Name is required.</small>
+                    <input formControlName="name" type="text" pInputText id="name" required fluid />
                 </div>
+                @if (form.touched && form.get('name')!.errors) {
+                    <form-error-label [control]="form.get('name')!" />
+                }
                 <div>
                     <label for="description" class="block font-bold mb-3">Description</label>
-                    <textarea id="description" pTextarea [(ngModel)]="product.description" required rows="3" cols="20" fluid></textarea>
+                    <textarea formControlName="description" id="description" pTextarea rows="3" cols="20" fluid></textarea>
                 </div>
+                @if (form.touched && form.get('description')!.errors) {
+                    <form-error-label [control]="form.get('description')!" />
+                }
                 <div>
                     <label for="category_id" class="block font-bold mb-3">Category</label>
-                    <p-select [options]="categories()" [(ngModel)]="selectedCategory" optionLabel="name" placeholder="Select a Category" class="w-full md:w-56" fluid />
+                    <p-select optionValue="id" formControlName="category_id" [options]="categories()" optionLabel="name" placeholder="Select a Category" class="w-full md:w-56" fluid />
                 </div>
                 <div class="grid grid-cols-12 gap-4">
                     <div class="col-span-6">
                         <label for="price" class="block font-bold mb-3">Price</label>
-                        <p-inputnumber id="price" [(ngModel)]="product.price" mode="currency" currency="USD" locale="en-US" fluid />
+                        <p-inputnumber styleClass="mb-4" formControlName="price" id="price" mode="currency" currency="USD" locale="en-US" fluid />
+                        @if (form.touched && form.get('price')!.errors) {
+                            <form-error-label [control]="form.get('price')!" />
+                        }
                     </div>
                     <div class="col-span-6">
-                        <label for="quantity" class="block font-bold mb-3">Stock</label>
-                        <p-inputnumber id="quantity" [(ngModel)]="product.stock" fluid />
+                        <label for="stock" class="block font-bold mb-3">Stock</label>
+                        <p-inputnumber [useGrouping]="false" suffix=" units" styleClass="mb-4" [step]="1" formControlName="stock" id="stock" fluid />
+                        @if (form.touched && form.get('stock')!.errors) {
+                            <form-error-label [control]="form.get('stock')!" />
+                        }
                     </div>
                 </div>
             </div>
-        </ng-template>
-
-        <ng-template #footer>
-            <p-button label="Cancel" icon="pi pi-times" text (click)="hideDialog()" />
-            <p-button label="Save" icon="pi pi-check" (click)="saveProduct()" />
-        </ng-template>
+            <div class="flex justify-end gap-2">
+                <p-button label="Cancel" icon="pi pi-times" text (click)="hideDialog()" />
+                <p-button [disabled]="!form.valid" label="Save" icon="pi pi-check" type="submit" />
+            </div>
+        </form>
     </p-dialog>
 }
 
