@@ -1,8 +1,9 @@
 import {
-  IsBoolean,
   IsOptional,
   IsString,
+  Max,
   MaxLength,
+  Min,
   MinLength,
 } from 'class-validator';
 
@@ -18,6 +19,7 @@ export class CreateCategoryDto {
   description?: string;
 
   @IsOptional()
-  @IsBoolean()
-  status?: boolean;
+  @Min(0)
+  @Max(1)
+  status?: number;
 }

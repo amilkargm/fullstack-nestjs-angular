@@ -1,8 +1,7 @@
-import { Controller, Param, ParseIntPipe, Query } from '@nestjs/common';
+import { Controller, Param, ParseIntPipe } from '@nestjs/common';
 import { Get, Post, Body, Patch, Delete } from '@nestjs/common';
 import { CreateProductDto, UpdateProductDto } from './dto';
 import { ProductsService } from './products.service';
-import { PaginationDto } from 'src/common/dto';
 import { Auth } from 'src/auth/decorators';
 import { UserRole } from 'src/auth/interfaces';
 
@@ -18,8 +17,8 @@ export class ProductsController {
 
   @Get()
   @Auth()
-  findAll(@Query() paginationDto: PaginationDto) {
-    return this.productsService.findAll(paginationDto);
+  findAll() {
+    return this.productsService.findAll();
   }
 
   @Get(':term')

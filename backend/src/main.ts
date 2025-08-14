@@ -11,16 +11,16 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
-      forbidNonWhitelisted: true,
+      forbidNonWhitelisted: false,
     }),
   );
 
-  // app.enableCors({
-  //   origin: '*',
-  //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  //   allowedHeaders: 'Content-Type, Accept',
-  //   credentials: true,
-  // });
+  app.enableCors({
+    origin: 'http://localhost:4200',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: 'Content-Type, Accept, Authorization',
+    credentials: true,
+  });
 
   await app.listen(process.env.PORT ?? 3000);
 

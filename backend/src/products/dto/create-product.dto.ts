@@ -1,10 +1,10 @@
 import {
-  IsBoolean,
   IsInt,
   IsNumber,
   IsOptional,
   IsPositive,
   IsString,
+  Max,
   MaxLength,
   Min,
   MinLength,
@@ -35,6 +35,7 @@ export class CreateProductDto {
   category_id?: number;
 
   @IsOptional()
-  @IsBoolean()
-  status?: boolean;
+  @Min(0)
+  @Max(1)
+  status?: number;
 }

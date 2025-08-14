@@ -1,8 +1,7 @@
-import { Controller, Param, ParseIntPipe, Query } from '@nestjs/common';
+import { Controller, Param, ParseIntPipe } from '@nestjs/common';
 import { Get, Post, Body, Patch, Delete } from '@nestjs/common';
 import { CreateCategoryDto, UpdateCategoryDto } from './dto';
 import { CategoriesService } from './categories.service';
-import { PaginationDto } from 'src/common/dto';
 import { Auth } from 'src/auth/decorators';
 import { UserRole } from 'src/auth/interfaces';
 
@@ -18,8 +17,8 @@ export class CategoriesController {
 
   @Get()
   @Auth()
-  findAll(@Query() paginationDto: PaginationDto) {
-    return this.categoriesService.findAll(paginationDto);
+  findAll() {
+    return this.categoriesService.findAll();
   }
 
   @Get(':term')

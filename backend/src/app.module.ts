@@ -6,6 +6,8 @@ import { SeedModule } from './seed/seed.module';
 import { CategoriesModule } from './categories/categories.module';
 import { CommonModule } from './common/common.module';
 import { ProductsModule } from './products/products.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -22,6 +24,17 @@ import { ProductsModule } from './products/products.module';
       database: process.env.DB_NAME,
       autoLoadEntities: true,
       synchronize: false, // Set to false in production
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(
+        __dirname,
+        '..',
+        '..',
+        'frontend',
+        'dist',
+        'frontend',
+        'browser',
+      ),
     }),
     AuthModule,
     SeedModule,

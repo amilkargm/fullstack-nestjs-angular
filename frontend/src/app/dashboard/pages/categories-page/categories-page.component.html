@@ -1,0 +1,96 @@
+@if (authService.isAdmin()) {
+    <p-toolbar styleClass="mb-6">
+        <ng-template #start>
+            <p-button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openNew()" />
+        </ng-template>
+
+        <ng-template #end>
+            <p-button label="Export" icon="pi pi-upload" severity="secondary" (onClick)="exportCSV()" />
+        </ng-template>
+    </p-toolbar>
+}
+
+<p-table
+    #dt
+    [value]="categories()"
+    [rows]="10"
+    [columns]="cols"
+    [paginator]="true"
+    [globalFilterFields]="['name', 'description']"
+    [tableStyle]="{ 'min-width': '75rem' }"
+    [rowHover]="true"
+    dataKey="id"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} categories"
+    [showCurrentPageReport]="true"
+    [rowsPerPageOptions]="[10, 20, 30]"
+>
+    <ng-template #caption>
+        <div class="flex items-center justify-between">
+            <h5 class="m-0">Manage Categories</h5>
+            <p-iconfield>
+                <p-inputicon styleClass="pi pi-search" />
+                <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..." />
+            </p-iconfield>
+        </div>
+    </ng-template>
+    <ng-template #header>
+        <tr>
+            <th pSortableColumn="name" style="min-width: 12rem">
+                Name
+                <p-sortIcon field="name" />
+            </th>
+            <th pSortableColumn="description" style="min-width: 16rem">
+                Description
+                <p-sortIcon field="description" />
+            </th>
+            <th pSortableColumn="status">
+                Status
+                <p-sortIcon field="status" />
+            </th>
+            @if (authService.isAdmin()) {
+                <th style="min-width: 12rem"></th>
+            }
+        </tr>
+    </ng-template>
+    <ng-template #body let-category>
+        <tr>
+            <td style="min-width: 12rem">{{ category.name }}</td>
+            <td style="min-width: 16rem">{{ category.description }}</td>
+            <td>
+                <p-tag [severity]="category.status ? 'success' : 'contrast'" [value]="category.status ? 'Activa' : 'Inactiva'" />
+            </td>
+
+            @if (authService.isAdmin()) {
+                <td>
+                    <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="editCategory(category)" />
+                    <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deleteCategory(category)" />
+                </td>
+            }
+        </tr>
+    </ng-template>
+</p-table>
+
+@if (authService.isAdmin()) {
+    <p-dialog [(visible)]="categoryDialog" [style]="{ width: '450px' }" header="Category Details" [modal]="true">
+        <ng-template #content>
+            <div class="flex flex-col gap-6">
+                <div>
+                    <label for="name" class="block font-bold mb-3">Name</label>
+                    <input type="text" pInputText id="name" [(ngModel)]="category.name" required autofocus fluid />
+                    <small class="text-red-500" *ngIf="submitted && !category.name">Name is required.</small>
+                </div>
+                <div>
+                    <label for="description" class="block font-bold mb-3">Description</label>
+                    <textarea id="description" pTextarea [(ngModel)]="category.description" required rows="3" cols="20" fluid></textarea>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template #footer>
+            <p-button label="Cancel" icon="pi pi-times" text (click)="hideDialog()" />
+            <p-button label="Save" icon="pi pi-check" (click)="saveCategory()" />
+        </ng-template>
+    </p-dialog>
+}
+
+<p-confirmdialog [style]="{ width: '450px' }" />
