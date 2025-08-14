@@ -79,7 +79,7 @@ export class ProductsPageComponent implements OnInit {
         description: ['', minLengthIfPresent(5)],
         price: ['0.00', [Validators.required, Validators.min(0.01)]],
         stock: ['0', [Validators.required, Validators.min(0)]],
-        category_id: [0]
+        category_id: [1]
     });
 
     productDialog: boolean = false;
@@ -152,7 +152,7 @@ export class ProductsPageComponent implements OnInit {
     }
 
     hideDialog() {
-        this.form.reset();
+        this.resetForm();
         this.productDialog = false;
         this.submitted = false;
     }
@@ -247,7 +247,16 @@ export class ProductsPageComponent implements OnInit {
         this.productDialog = false;
         this.product = {};
         this.selectedCategory = {};
+        this.resetForm();
+    }
+
+    resetForm() {
         this.form.reset();
+        this.form.patchValue({
+            category_id: 1,
+            price: '0',
+            stock: '0'
+        });
     }
 
     onSubmit() {
