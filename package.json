@@ -22,7 +22,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "install:deps": "npm --prefix ./frontend install && npm --prefix ./backend install",
+    "install:deps": "npm --prefix ./frontend install && npm --prefix ./backend install --legacy-peer-deps",
     "build:full-app": "npm --prefix ./frontend run build && npm --prefix ./backend run build",
     "start:full-app": "npm --prefix ./frontend run build && npm --prefix ./backend run start:prod"
   }
