@@ -7,32 +7,25 @@ export class FormUtils {
     static notOnlySpacesPattern = '^[a-zA-Z0-9]+$';
 
     static getTextError(errors: ValidationErrors) {
+        console.log(errors);
         for (const key of Object.keys(errors)) {
+            
             switch (key) {
                 case 'required':
-                    return '¡Este campo es obligatorio!';
+                    return 'This field is required!';
+
+                case 'minLengthIfPresent':
+                    return `If provided, this field requires at least ${errors['minLengthIfPresent'].requiredLength} characters!`;
 
                 case 'minlength':
-                    return `¡Se requieren al menos ${errors['minlength'].requiredLength} caracteres!`;
+                    return `This field requires at least ${errors['minlength'].requiredLength} characters!`;
+
 
                 case 'min':
-                    return `¡El valor debe de ser al menos ${errors['min'].min}!`;
+                    return `This field's value must be at least ${errors['min'].min}!`;
 
                 case 'email':
-                    return `¡El valor ingresado debe de ser un correo electrónico!`;
-
-                case 'emailTaken':
-                    return `¡El correo electrónico ya existe en la base de datos!`;
-
-                case 'noStrider':
-                    return `No se puede usar el username de strider en la app`;
-
-                case 'emailPattern':
-                    if (errors['pattern'].requiredPattern === FormUtils.emailPattern) {
-                        return '¡El valor ingresado no luce como un correo electrónico!';
-                    }
-
-                    return '¡Error de patrón contra expresión regular!';
+                    return `The value provided is not an email!`;
 
                 default:
                     return `¡Error de validación no controlado ${key}!`;

@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table, TableModule } from 'primeng/table';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { ToastModule } from 'primeng/toast';
@@ -22,6 +22,9 @@ import { AuthService } from '@/auth/services/auth.service';
 import { ProductsService } from '@/dashboard/services/products.service';
 import { Category, Product } from '@/dashboard/interfaces';
 import { CategoriesService } from '@/dashboard/services/categories.service';
+import { minLengthIfPresent } from '@/shared/validators/min-length-if-present.validator';
+import { min } from 'rxjs';
+import { FormErrorLabelComponent } from '@/shared/components/form-error-label/form-error-label.component';
 
 interface Column {
     field: string;
@@ -38,6 +41,7 @@ interface ExportColumn {
     selector: 'app-crud',
     standalone: true,
     imports: [
+        ReactiveFormsModule,
         CommonModule,
         TableModule,
         FormsModule,
@@ -56,17 +60,27 @@ interface ExportColumn {
         InputIconModule,
         IconFieldModule,
         ConfirmDialogModule,
-        SelectModule
+        SelectModule,
+        FormErrorLabelComponent
     ],
     templateUrl: './products-page.component.html',
     providers: [ConfirmationService]
 })
 export class ProductsPageComponent implements OnInit {
     authService = inject(AuthService);
+    fb = inject(FormBuilder);
     private productService = inject(ProductsService);
     private categoryService = inject(CategoriesService);
     private messageService = inject(MessageService);
     private confirmationService = inject(ConfirmationService);
+
+    form = this.fb.group({
+        name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+        description: ['', minLengthIfPresent(5)],
+        price: ['0.00', [Validators.required, Validators.min(0.01)]],
+        stock: ['0', [Validators.required, Validators.min(0)]],
+        category_id: [1]
+    });
 
     productDialog: boolean = false;
 
@@ -76,7 +90,7 @@ export class ProductsPageComponent implements OnInit {
 
     product!: Product;
 
-    selectedCategory!: Category;
+    selectedCategory?: Category;
 
     submitted: boolean = false;
 
@@ -126,10 +140,19 @@ export class ProductsPageComponent implements OnInit {
 
     editProduct(product: Product) {
         this.product = { ...product };
+
+        this.form.patchValue({
+            name: product.name,
+            description: product.description,
+            category_id: product.category ? product.category.id : undefined,
+            price: product.price?.toString(),
+            stock: product.stock?.toString()
+        });
         this.productDialog = true;
     }
 
     hideDialog() {
+        this.resetForm();
         this.productDialog = false;
         this.submitted = false;
     }
@@ -178,44 +201,76 @@ export class ProductsPageComponent implements OnInit {
         return index;
     }
 
+    findCategoryIndexById(id: number): number {
+        let index = -1;
+        for (let i = 0; i < this.categories().length; i++) {
+            if (this.products()[i].id === id) {
+                index = i;
+                break;
+            }
+        }
+
+        return index;
+    }
+
     saveProduct() {
         this.submitted = true;
         let _products = this.products();
-        if (this.product.name?.trim()) {
-            if (this.selectedCategory) {
-                this.product.category = this.selectedCategory;
-            }
-            if (this.product.id) {
-                this.productService.updateProduct(this.product.id, this.product).subscribe((product) => {
-                    this.productService.getProducts().subscribe((data) => {
-                        this.products.set(data);
-                    });
-
-                    this.products.set([..._products]);
-                    this.messageService.add({
-                        severity: 'success',
-                        summary: 'Successful',
-                        key: 'successes',
-                        detail: 'Product Updated',
-                        life: 3000
-                    });
+        if (this.product.id) {
+            this.productService.updateProduct(this.product.id, this.product).subscribe((product) => {
+                this.productService.getProducts().subscribe((data) => {
+                    this.products.set(data);
                 });
-            } else {
-                this.productService.createProduct(this.product).subscribe((product) => {
-                    this.products.set([..._products, product]);
-                    this.messageService.add({
-                        severity: 'success',
-                        summary: 'Successful',
-                        key: 'successes',
-                        detail: 'Product Created',
-                        life: 3000
-                    });
-                });
-            }
 
-            this.productDialog = false;
-            this.product = {};
-            this.selectedCategory = {};
+                this.products.set([..._products]);
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Successful',
+                    key: 'successes',
+                    detail: 'Product Updated',
+                    life: 3000
+                });
+            });
+        } else {
+            this.productService.createProduct(this.product).subscribe((product) => {
+                this.products.set([..._products, product]);
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Successful',
+                    key: 'successes',
+                    detail: 'Product Created',
+                    life: 3000
+                });
+            });
         }
+
+        this.productDialog = false;
+        this.product = {};
+        this.selectedCategory = {};
+        this.resetForm();
+    }
+
+    resetForm() {
+        this.form.reset();
+        this.form.patchValue({
+            category_id: 1,
+            price: '0',
+            stock: '0'
+        });
+    }
+
+    onSubmit() {
+        if (this.form.invalid) {
+            return;
+        }
+        this.product = {
+            ...this.product,
+            description: this.form.value.description!,
+            name: this.form.value.name!,
+            price: parseFloat(this.form.value.price!),
+            stock: parseFloat(this.form.value.stock!),
+            category_id: this.form.value.category_id!
+        };
+        this.saveProduct();
     }
 }

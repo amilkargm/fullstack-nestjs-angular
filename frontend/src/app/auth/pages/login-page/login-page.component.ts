@@ -17,11 +17,9 @@ import { FormErrorLabelComponent } from 'src/app/shared/components/form-error-la
     styleUrl: './login-page.component.css'
 })
 export class LoginPageComponent {
-    fb: FormBuilder = inject(FormBuilder);
+    fb = inject(FormBuilder);
     authService = inject(AuthService);
     router = inject(Router);
-    hasError = signal(false);
-    isPosting = signal(false);
 
     loginForm = this.fb.group({
         email: ['', [Validators.required, Validators.email]],
@@ -30,10 +28,6 @@ export class LoginPageComponent {
 
     onSubmit() {
         if (this.loginForm.invalid) {
-            this.hasError.set(true);
-            setTimeout(() => {
-                this.hasError.set(false);
-            }, 2000);
             return;
         }
         const { email = '', password = '' } = this.loginForm.value;
@@ -42,7 +36,6 @@ export class LoginPageComponent {
                 this.router.navigateByUrl('/');
                 return;
             }
-            this.hasError.set(true);
         });
     }
 }
